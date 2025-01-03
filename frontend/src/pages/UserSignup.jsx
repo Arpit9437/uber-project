@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import {UserDataContext} from "../context/UserContext";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserDataContext);
   const [formData, setFormData] = useState({
     fullname: {
       firstName: "",
@@ -31,13 +35,27 @@ const SignupPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", {
-      username: formData.fullname,
+    const newUser = {
+      fullname:{
+        firstname: formData.fullname.firstName,
+        lastname: formData.fullname.lastName,
+      },
       email: formData.email,
       password: formData.password,
-    });
+    }
+
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/register`, newUser);
+
+    if(response.status === 201){
+      const data = response.data;
+      console.log(data);
+      setUser(data.user);
+      localStorage.setItem('token', data.token)
+      navigate("/home");
+    }
+
     setFormData({
       fullname: { firstName: "", lastName: "" },
       email: "",

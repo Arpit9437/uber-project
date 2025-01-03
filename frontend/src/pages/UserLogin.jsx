@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import {UserDataContext} from "../context/UserContext";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserDataContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -17,9 +21,28 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+
+    const userLogin = {
+      email: formData.email,
+      password: formData.password
+    }
+
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, userLogin);
+
+    if(response.status === 200){
+      const data = response.data;
+      console.log(data);
+      setUser(data.user);
+      localStorage.setItem('token', data.token)
+      navigate("/home");
+    }
+
+    setFormData({
+      email: "",
+      password: "",
+    });
   };
 
   return (
