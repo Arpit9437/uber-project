@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {UserDataContext} from "../context/UserContext";
+import { UserDataContext } from "../context/UserContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserDataContext);
+  const { setUser } = useContext(UserDataContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -23,19 +23,17 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const userLogin = {
       email: formData.email,
       password: formData.password
-    }
+    };
 
     const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, userLogin);
 
-    if(response.status === 200){
+    if(response.status === 200) {
       const data = response.data;
-      console.log(data);
       setUser(data.user);
-      localStorage.setItem('token', data.token)
+      localStorage.setItem('token', data.token);
       navigate("/home");
     }
 
@@ -46,55 +44,54 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <main className="flex-1 px-4 pt-8 pb-20">
-        <div className="mb-10">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
-            alt="uber logo"
-            className="w-16 h-auto object-contain"
-          />
-        </div>
+    <div className="min-h-screen bg-white p-6 md:p-8">
+      <div className="max-w-md mx-auto">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
+          alt="Uber Logo"
+          className="w-16 md:w-20 mb-8"
+        />
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email/Phone Input */}
-          <div>
+        <h2 className="text-3xl font-bold mb-8">Welcome Back</h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="relative mb-4">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               name="email"
-              placeholder="Enter email"
+              placeholder="Enter your email address"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-base"
+              className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
               required
             />
           </div>
 
-          {/* Password Input */}
           <div className="relative">
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type={showPassword ? "text" : "password"}
               name="password"
-              placeholder="Password"
+              placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent pr-12 text-base"
+              className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               {showPassword ? (
-                <EyeOff className="w-5 h-5 text-gray-500" />
+                <EyeOff className="w-5 h-5" />
               ) : (
-                <Eye className="w-5 h-5 text-gray-500" />
+                <Eye className="w-5 h-5" />
               )}
             </button>
           </div>
 
-          {/* Forgot Password Link */}
           <div className="flex justify-end">
             <Link
               to="/forgot-password"
@@ -104,35 +101,30 @@ const LoginPage = () => {
             </Link>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-black text-white py-3.5 rounded-lg font-medium hover:bg-gray-800 transition-colors mt-6 text-base"
+            className="w-full bg-black text-white font-semibold py-4 rounded-lg hover:bg-gray-900 transition-colors text-lg"
           >
-            Sign in
+            Sign In
           </button>
+
+          <p className="text-center text-gray-600">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-black font-medium hover:underline">
+              Sign up
+            </Link>
+          </p>
         </form>
 
-        {/* Sign Up Link */}
-        <div className="mt-6 text-center">
-          <Link
-            to="/signup"
-            className="text-black font-medium text-base hover:underline"
-          >
-            Don&apos;t have an account? Sign up
-          </Link>
-        </div>
-      </main>
-
-      {/* Sign in as Captain Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="px-4 py-4">
-          <Link
-            to="/captain-login"
-            className="block w-full py-3.5 text-center bg-[#10b461] text-white rounded-lg font-medium hover:bg-[#0ea054] transition-colors text-base"
-          >
-            Sign in as Captain
-          </Link>
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+          <div className="max-w-md mx-auto p-4">
+            <Link
+              to="/captain-login"
+              className="block w-full py-4 text-center bg-[#10b461] text-white rounded-lg font-medium hover:bg-[#0ea054] transition-colors text-lg"
+            >
+              Sign in as Captain
+            </Link>
+          </div>
         </div>
       </div>
     </div>
