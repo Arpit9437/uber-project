@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/user.routes');
 const captainRoutes = require('./routes/captain.routes');
 const connectToDb = require('./db/db');
+const mapRoutes = require('./routes/map.routes');
+const rideRoutes = require('./routes/ride.routes');
 
 dotenv.config();
 
@@ -17,6 +19,8 @@ app.use(cookieParser());
 
 app.use('/users', userRoutes);
 app.use('/captains', captainRoutes);
+app.use('/maps', mapRoutes);
+app.use('/rides', rideRoutes);
 
 const port = process.env.PORT || 4000;
 
