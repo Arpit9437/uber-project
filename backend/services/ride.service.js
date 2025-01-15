@@ -1,5 +1,6 @@
 const rideModel = require("../models/ride.model");
 const mapService = require("./map.service");
+const crypto = require("crypto");
 
 module.exports.createRide = async ({
   user,
@@ -15,6 +16,7 @@ module.exports.createRide = async ({
     user,
     pickup,
     destination,
+    otp: getOtp(6),
     fare: fare[vehicleType],
   });
   await ride.save();
@@ -65,4 +67,14 @@ async function getFare(pickup, destination) {
   };
 
   return fare;
+}
+
+module.exports.getFare = getFare;
+
+function getOtp(num){
+  function generateOtp(num){
+    const otp = crypto.randomInt(Math.pow(10, num - 1), Math.pow(10, num)).toString();
+    return otp;  
+  }
+  return generateOtp(num);
 }

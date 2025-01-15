@@ -6,7 +6,18 @@ const ConfirmRide = ({
   pickup,
   destination,
   selectedVehicle,
+  createRide,
 }) => {
+  const handleConfirmRide = async () => {
+    console.log(selectedVehicle);
+    try {
+      await createRide(selectedVehicle.id);
+      onConfirmRide();
+    } catch (error) {
+      console.error('Error creating ride:', error);
+    }
+  };
+
   return (
     <div className="bg-white p-4 rounded-t-3xl">
       <button onClick={onClose} className="w-full text-center mb-4">
@@ -62,7 +73,7 @@ const ConfirmRide = ({
         </div>
 
         <button
-          onClick={onConfirmRide}
+          onClick={handleConfirmRide}
           className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-900 transition-colors"
         >
           Confirm Ride
@@ -71,4 +82,5 @@ const ConfirmRide = ({
     </div>
   );
 };
+
 export default ConfirmRide;

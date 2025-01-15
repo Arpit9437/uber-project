@@ -1,6 +1,6 @@
 import { X, Car, Clock, User, Bike, Car as AutoIcon } from "lucide-react";
 
-const VehiclePanel = ({ onClose, onVehicleSelect, fare = {} }) => {
+const VehiclePanel = ({ onClose, onVehicleSelect, fare = {}, isLoading = false, selectedVehicle }) => {
   const vehicles = [
     {
       id: "car",
@@ -8,7 +8,7 @@ const VehiclePanel = ({ onClose, onVehicleSelect, fare = {} }) => {
       capacity: 4,
       eta: "2 mins away",
       description: "Affordable, compact rides",
-      price: fare.car || 199,
+      price: fare?.car || 58,
       icon: Car,
     },
     {
@@ -17,7 +17,7 @@ const VehiclePanel = ({ onClose, onVehicleSelect, fare = {} }) => {
       capacity: 1,
       eta: "3 mins away",
       description: "Affordable motorcycle rides",
-      price: fare.moto || 49,
+      price: fare?.moto || 24,
       icon: Bike,
     },
     {
@@ -26,10 +26,19 @@ const VehiclePanel = ({ onClose, onVehicleSelect, fare = {} }) => {
       capacity: 3,
       eta: "3 mins away",
       description: "Affordable Auto rides",
-      price: fare.auto || 99,
+      price: fare?.auto || 35,
       icon: AutoIcon,
     },
   ];
+
+  const handleVehicleSelection = async (vehicle) => {
+    try {
+      selectedVehicle(vehicle);
+      onVehicleSelect(vehicle);
+    } catch (error) {
+      console.error('Error creating ride:', error);
+    }
+  };
 
   return (
     <div className="bg-white p-4 rounded-t-3xl">
@@ -40,37 +49,41 @@ const VehiclePanel = ({ onClose, onVehicleSelect, fare = {} }) => {
         />
       </button>
       <h3 className="text-2xl font-semibold mb-5">Choose a Vehicle</h3>
-      <div className="space-y-2">
-        {vehicles.map((vehicle) => {
-          const VehicleIcon = vehicle.icon;
-          return (
-            <button
-              key={vehicle.id}
-              onClick={() => onVehicleSelect(vehicle)}
-              className="flex items-center w-full p-4 border-2 rounded-xl hover:border-black transition-colors"
-            >
-              <div className="h-10 w-16 bg-gray-200 rounded flex items-center justify-center">
-                <VehicleIcon size={24} className="text-gray-600" />
-              </div>
-              <div className="ml-4 flex-1 text-left">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-medium">{vehicle.name}</h4>
-                  <span className="text-sm text-gray-600">
-                    <User size={14} className="inline mr-1" />
-                    {vehicle.capacity}
-                  </span>
+      {isLoading ? (
+        <div className="text-center py-4 text-gray-500">Loading fares...</div>
+      ) : (
+        <div className="space-y-2">
+          {vehicles.map((vehicle) => {
+            const VehicleIcon = vehicle.icon;
+            return (
+              <button
+                key={vehicle.id}
+                onClick={() => handleVehicleSelection(vehicle)}
+                className="flex items-center w-full p-4 border-2 rounded-xl hover:border-black transition-colors"
+              >
+                <div className="h-10 w-16 bg-gray-200 rounded flex items-center justify-center">
+                  <VehicleIcon size={24} className="text-gray-600" />
                 </div>
-                <h5 className="text-sm font-medium flex items-center gap-1">
-                  <Clock size={14} className="text-gray-500" />
-                  {vehicle.eta}
-                </h5>
-                <p className="text-xs text-gray-600">{vehicle.description}</p>
-              </div>
-              <div className="text-lg font-semibold">₹{vehicle.price}</div>
-            </button>
-          );
-        })}
-      </div>
+                <div className="ml-4 flex-1 text-left">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-medium">{vehicle.name}</h4>
+                    <span className="text-sm text-gray-600">
+                      <User size={14} className="inline mr-1" />
+                      {vehicle.capacity}
+                    </span>
+                  </div>
+                  <h5 className="text-sm font-medium flex items-center gap-1">
+                    <Clock size={14} className="text-gray-500" />
+                    {vehicle.eta}
+                  </h5>
+                  <p className="text-xs text-gray-600">{vehicle.description}</p>
+                </div>
+                <div className="text-lg font-semibold">₹{vehicle.price}</div>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
