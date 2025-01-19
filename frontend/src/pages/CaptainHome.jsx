@@ -4,6 +4,7 @@ import CaptainDetails from "../components/CaptainDetails";
 import RidePopUp from "../components/RidePopUp";
 import ConfirmRidePopUp from "../components/ConfirmRidePopUp";
 import { SocketContext } from "../context/SocketContext";
+import axios from 'axios';
 
 const CaptainHome = () => {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
@@ -11,19 +12,6 @@ const CaptainHome = () => {
   const [ride, setRide] = useState(null);
   const [captain, setCaptain] = useState(null);
   const { socket } = useContext(SocketContext);
-
-  const confirmRide = () => {
-    // Mock data for demo
-    const rideData = {
-      user: {
-        fullname: { firstname: "John", lastname: "Doe" },
-      },
-      pickup: "Sample Pickup Location",
-      destination: "Sample Destination",
-      fare: 199,
-    };
-    setRide(rideData);
-  };
 
   useEffect(() => {
     const storedCaptain = localStorage.getItem("captain");
@@ -33,7 +21,7 @@ const CaptainHome = () => {
         setCaptain(parsedCaptain);
       } catch (error) {
         console.error("Error parsing captain data:", error);
-        localStorage.removeItem("captain"); 
+        localStorage.removeItem("captain");
       }
     }
   }, []);
@@ -41,6 +29,8 @@ const CaptainHome = () => {
   useEffect(() => {
     socket?.on("new-ride", (data) => {
       console.log(data);
+      setRide(data);
+      setRidePopupPanel(true);
     });
   }, [socket]);
 
@@ -56,22 +46,22 @@ const CaptainHome = () => {
       }
 
       navigator.geolocation.getCurrentPosition(
-        position => {
-          socket.emit('update-location-captain', {
+        (position) => {
+          socket.emit("update-location-captain", {
             userId: captain._id,
             location: {
               ltd: position.coords.latitude,
-              lng: position.coords.longitude
-            }
+              lng: position.coords.longitude,
+            },
           });
         },
-        error => {
+        (error) => {
           console.error("Error getting location:", error);
         },
         {
           enableHighAccuracy: true,
           timeout: 10000,
-          maximumAge: 0
+          maximumAge: 0,
         }
       );
     };
@@ -79,6 +69,24 @@ const CaptainHome = () => {
     updateLocation();
     const locationInterval = setInterval(updateLocation, 10000);
   }, [captain, socket]);
+
+  const confirmRide = async () => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/rides/confirm`,
+      {
+        rideId: ride._id,
+        captainId: captain._id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    setRidePopupPanel(false);
+    setConfirmRidePopupPanel(true);
+  };
 
   if (!captain) return null;
 
