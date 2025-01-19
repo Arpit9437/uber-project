@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 import { MapPin, X } from 'lucide-react';
 import { debounce } from 'lodash';
 import axios from 'axios';
@@ -8,6 +8,8 @@ import ConfirmRide from '../components/ConfirmRide';
 import WaitingForDriver from '../components/WaitingForDriver';
 import LookingForDriver from '../components/LookingForDriver';
 import { useEffect } from 'react';
+import { SocketContext } from '../context/SocketContext';
+import {UserDataContext} from "../context/UserContext";
 
 const Home = () => {
   const [pickup, setPickup] = useState('');
@@ -23,6 +25,8 @@ const Home = () => {
   const [fareData, setFareData] = useState(null);
   const [isFareLoading, setIsFareLoading] = useState(false);
   const [vehicleType, setVehicleType] = useState(null);
+  const {user} = useContext(UserDataContext);
+  const {socket} = useContext(SocketContext);
 
   const fetchFare = async (pickupLocation, destinationLocation) => {
     if (!pickupLocation || !destinationLocation) return;
@@ -53,6 +57,10 @@ const Home = () => {
       fetchFare(pickup, destination);
     }
   }, [activePanel, pickup, destination]);
+
+  useEffect(() =>{
+    socket.emit("join", {userType: "user", userId: user._id})
+  },[user])
 
   const fetchSuggestions = async (input) => {
     if (!input || input.length < 3) {

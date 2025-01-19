@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CaptainDataContext } from '../context/CaptainContext';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Car, Palette, Hash, Users, ChevronDown } from 'lucide-react';
 import axios from 'axios';
@@ -16,7 +15,6 @@ const CaptainSignup = () => {
   const [vehicleCapacity, setVehicleCapacity] = useState('');
   const [vehicleType, setVehicleType] = useState('');
 
-  const { setCaptain } = React.useContext(CaptainDataContext);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -39,7 +37,7 @@ const CaptainSignup = () => {
 
     if (response.status === 201) {
       const data = response.data;
-      setCaptain(data.captain);
+      localStorage.setItem('captain', JSON.stringify(data.captain));
       localStorage.setItem('token', data.token);
       navigate('/captain-home');
     }
@@ -206,3 +204,4 @@ const CaptainSignup = () => {
 };
 
 export default CaptainSignup;
+

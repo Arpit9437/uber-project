@@ -3,26 +3,29 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import axios from 'axios';
-import { CaptainDataContext } from '../context/CaptainContext';
 
 const CaptainLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const { setCaptain } = React.useContext(CaptainDataContext);
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
     e.preventDefault();
     const captain = { email, password };
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/captains/login`, captain);
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/captains/login`, captain);
 
-    if (response.status === 200) {
-      const data = response.data;
-      setCaptain(data.captain);
-      localStorage.setItem('token', data.token);
-      navigate('/captain-home');
+      if (response.status === 200) {
+        const data = response.data;
+        localStorage.setItem('captain', JSON.stringify(data.captain));
+        localStorage.setItem('token', data.token);
+        navigate('/captain-home');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Handle login error (e.g., show error message to user)
     }
 
     setEmail('');
@@ -104,3 +107,4 @@ const CaptainLogin = () => {
 };
 
 export default CaptainLogin;
+

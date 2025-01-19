@@ -1,42 +1,43 @@
-import { useContext } from 'react'
-import { CaptainDataContext } from '../context/CaptainContext'
+import { useState, useEffect } from 'react'
 
 const CaptainDetails = () => {
+    const [captain, setCaptain] = useState(null)
 
-    const { captain } = useContext(CaptainDataContext)
+    useEffect(() => {
+        const storedCaptain = localStorage.getItem('captain')
+        if (storedCaptain) {
+            setCaptain(JSON.parse(storedCaptain))
+        }
+    }, [])
 
     return (
-        <div>
-            <div className='flex items-center justify-between'>
-                <div className='flex items-center justify-start gap-3'>
-                    <img className='h-10 w-10 rounded-full object-cover' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdlMd7stpWUCmjpfRjUsQ72xSWikidbgaI1w&s" alt="" />
-                    {/* <h4 className='text-lg font-medium capitalize'>{captain.fullname.firstname + " " + captain.fullname.lastname}</h4> */}
+        <div className="p-6 bg-white rounded-lg shadow-md">
+            <div className='flex items-center justify-between mb-6'>
+                <div>
+                    {captain && <h4 className='text-2xl font-bold capitalize'>{`${captain.fullname.firstname} ${captain.fullname.lastname}`}</h4>}
                 </div>
                 <div>
                     <h4 className='text-xl font-semibold'>₹295.20</h4>
                     <p className='text-sm text-gray-600'>Earned</p>
                 </div>
             </div>
-            <div className='flex p-3 mt-8 bg-gray-100 rounded-xl justify-center gap-5 items-start'>
+            <div className='grid grid-cols-3 gap-4 bg-gray-100 rounded-xl p-4'>
                 <div className='text-center'>
-                    <i className="text-3xl mb-2 font-thin ri-timer-2-line"></i>
                     <h5 className='text-lg font-medium'>10.2</h5>
                     <p className='text-sm text-gray-600'>Hours Online</p>
                 </div>
                 <div className='text-center'>
-                    <i className="text-3xl mb-2 font-thin ri-speed-up-line"></i>
-                    <h5 className='text-lg font-medium'>10.2</h5>
-                    <p className='text-sm text-gray-600'>Hours Online</p>
+                    <h5 className='text-lg font-medium'>25</h5>
+                    <p className='text-sm text-gray-600'>Trips Completed</p>
                 </div>
                 <div className='text-center'>
-                    <i className="text-3xl mb-2 font-thin ri-booklet-line"></i>
-                    <h5 className='text-lg font-medium'>10.2</h5>
-                    <p className='text-sm text-gray-600'>Hours Online</p>
+                    <h5 className='text-lg font-medium'>4.8</h5>
+                    <p className='text-sm text-gray-600'>Rating</p>
                 </div>
-
             </div>
         </div>
     )
 }
 
-export default CaptainDetails;
+export default CaptainDetails
+

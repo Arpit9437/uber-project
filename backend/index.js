@@ -8,6 +8,7 @@ const captainRoutes = require('./routes/captain.routes');
 const connectToDb = require('./db/db');
 const mapRoutes = require('./routes/map.routes');
 const rideRoutes = require('./routes/ride.routes');
+const { initializeSocket } = require('./socket'); 
 
 dotenv.config();
 
@@ -28,7 +29,8 @@ const server = http.createServer(app);
 connectToDb();
 
 server.listen(port, () => {
-    console.log(`server running on ${port}`);
+  console.log(`server running on ${port}`);
+  initializeSocket(server); 
 });
 
 module.exports = app;

@@ -15,8 +15,12 @@ export const CaptainLogout = () => {
         }).then((response) => {
             if (response.status === 200) {
                 localStorage.removeItem('token')
+                localStorage.removeItem('captain')
                 navigate('/captain-login')
             }
+        }).catch((error) => {
+            console.error('Logout failed:', error)
+            // Handle logout error
         })
     }, [navigate])
 
@@ -24,3 +28,4 @@ export const CaptainLogout = () => {
 }
 
 export default CaptainLogout
+
