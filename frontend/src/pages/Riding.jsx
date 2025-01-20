@@ -1,30 +1,33 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, MapPin, Wallet, Car } from 'lucide-react';
+import React, { useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, MapPin, Wallet, Car } from "lucide-react";
+import { SocketContext } from "../context/SocketContext";
+import LiveTracking from "../components/LiveTracking";
 
 const Riding = () => {
   const location = useLocation();
   const { ride } = location.state || {};
   const navigate = useNavigate();
+  const { socket } = useContext(SocketContext);
+
+  socket.on("ride-ended", () => {
+    navigate("/home");
+  });
 
   const handlePayment = () => {
-    console.log('Processing payment...');
+    console.log("Processing payment...");
   };
 
   return (
     <div className="h-screen relative overflow-hidden">
       {/* Map Section */}
       <div className="h-screen w-screen">
-        <img
-          src="https://reactnativeexample.com/content/images/2018/09/grab-uber-map-location-picker.gif"
-          alt="Live trip map"
-          className="w-full h-full object-cover"
-        />
+        <LiveTracking />
       </div>
 
       {/* Home Button */}
-      <Link 
-        to="/home" 
+      <Link
+        to="/home"
         className="fixed right-4 top-4 h-12 w-12 bg-white shadow-lg flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors z-10"
       >
         <Home className="w-6 h-6 text-gray-700" />
@@ -41,15 +44,15 @@ const Riding = () => {
               </div>
               <div>
                 <h4 className="font-medium capitalize">
-                  {ride?.captain?.fullname?.firstname || 'John'}
+                  {ride?.captain?.fullname?.firstname || "John"}
                 </h4>
                 <p className="text-sm text-gray-600">
-                  {ride?.captain?.vehicle?.plate || 'XX XX XXXX'}
+                  {ride?.captain?.vehicle?.plate || "XX XX XXXX"}
                 </p>
               </div>
               <div className="ml-auto">
                 <span className="text-lg font-semibold">
-                  ₹{ride?.fare || '0'}
+                  ₹{ride?.fare || "0"}
                 </span>
               </div>
             </div>
@@ -69,7 +72,7 @@ const Riding = () => {
                 <div>
                   <p className="text-sm text-gray-500">Destination</p>
                   <p className="font-medium">
-                    {ride?.destination || 'Destination Address'}
+                    {ride?.destination || "Destination Address"}
                   </p>
                 </div>
               </div>
@@ -85,7 +88,7 @@ const Riding = () => {
             </div>
 
             {/* Payment Button */}
-            <button 
+            <button
               onClick={handlePayment}
               className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-900 transition-colors"
             >

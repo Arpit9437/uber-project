@@ -1,12 +1,27 @@
+import axios from 'axios';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const FinishRide = ({ onClose, ride }) => {
-  const handleFinishRide = () => {
-    // Simulating ride completion without backend
-    console.log('Ride finished');
-    onClose();
-  };
+  const navigate = useNavigate()
 
+    async function endRide() {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/rides/end-ride`, {
+
+            rideId: ride._id
+
+
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+
+        if (response.status === 200) {
+            navigate('/captain-home')
+        }
+
+    }
   return (
     <div className="relative px-4">
       {/* Drag handle */}
@@ -91,7 +106,7 @@ const FinishRide = ({ onClose, ride }) => {
       {/* Action Button */}
       <div className="mb-4">
         <button
-          onClick={handleFinishRide}
+          onClick={endRide}
           className="w-full bg-black text-white font-medium py-3 rounded-lg hover:bg-gray-900 transition-colors"
         >
           Complete Trip
