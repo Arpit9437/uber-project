@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { LoadScript, GoogleMap, MarkerF } from "@react-google-maps/api"
+import { LoadScript, GoogleMap, MarkerF, DirectionsRenderer } from "@react-google-maps/api"
 
 const containerStyle = {
   width: "100%",
@@ -11,53 +11,76 @@ const defaultCenter = {
   lng: -38.523,
 }
 
-const LiveTracking = () => {
+const LiveTracking = ({ pickup, destination }) => {
   const [currentPosition, setCurrentPosition] = useState(defaultCenter)
   const [map, setMap] = useState(null)
+  const [directions, setDirections] = useState(null)
+  const [pickupCoords, setPickupCoords] = useState(null)
+  const [destinationCoords, setDestinationCoords] = useState(null)
 
   useEffect(() => {
-    let watchId
-
-    const handlePositionUpdate = (position) => {
-      const { latitude, longitude } = position.coords
-      setCurrentPosition({
-        lat: latitude,
-        lng: longitude,
-      })
-    }
-
-    const handleError = (error) => {
-      console.error("Error getting location:", error)
-    }
-
-    navigator.geolocation.getCurrentPosition(handlePositionUpdate, handleError, { enableHighAccuracy: true })
-
-    watchId = navigator.geolocation.watchPosition(handlePositionUpdate, handleError, {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0,
-    })
-
-    return () => {
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId)
-      }
-    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCurrentPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        })
+      },
+      (error) => console.error("Error getting location:", error),
+      { enableHighAccuracy: true }
+    )
   }, [])
 
   useEffect(() => {
-    if (map && currentPosition) {
-      map.panTo(currentPosition)
-    }
-  }, [map, currentPosition])
+    if (!pickup || !destination) return
 
-  const onLoad = (map) => {
-    setMap(map)
-  }
+    const geocoder = new window.google.maps.Geocoder()
+    
+    // Get pickup coordinates
+    geocoder.geocode({ address: pickup }, (results, status) => {
+      if (status === "OK") {
+        setPickupCoords({
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
+        })
+      }
+    })
 
-  const onUnmount = () => {
-    setMap(null)
-  }
+    // Get destination coordinates
+    geocoder.geocode({ address: destination }, (results, status) => {
+      if (status === "OK") {
+        setDestinationCoords({
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
+        })
+      }
+    })
+  }, [pickup, destination])
+
+  useEffect(() => {
+    if (!pickupCoords || !destinationCoords || !map) return
+
+    const directionsService = new window.google.maps.DirectionsService()
+
+    directionsService.route(
+      {
+        origin: pickupCoords,
+        destination: destinationCoords,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === "OK") {
+          setDirections(result)
+          
+          // Fit map bounds to show entire route
+          const bounds = new window.google.maps.LatLngBounds()
+          bounds.extend(pickupCoords)
+          bounds.extend(destinationCoords)
+          map.fitBounds(bounds)
+        }
+      }
+    )
+  }, [pickupCoords, destinationCoords, map])
 
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
@@ -65,14 +88,15 @@ const LiveTracking = () => {
         mapContainerStyle={containerStyle}
         center={currentPosition}
         zoom={15}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
+        onLoad={setMap}
+        options={{ disableDefaultUI: true }}
       >
-        <MarkerF position={currentPosition} />
+        {pickupCoords && <MarkerF position={pickupCoords}/>}
+        {destinationCoords && <MarkerF position={destinationCoords}/>}
+        {directions && <DirectionsRenderer directions={directions} />}
       </GoogleMap>
     </LoadScript>
   )
 }
 
 export default LiveTracking
-

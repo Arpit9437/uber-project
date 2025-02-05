@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import CaptainDetails from "../components/CaptainDetails";
 import RidePopUp from "../components/RidePopUp";
@@ -6,7 +6,8 @@ import ConfirmRidePopUp from "../components/ConfirmRidePopUp";
 import { SocketContext } from "../context/SocketContext";
 import axios from 'axios';
 import LiveTracking from "../components/LiveTracking";
-import { LogOut, LucideLogOut } from "lucide-react";
+import { LucideLogOut } from "lucide-react";
+import LogoutButton from "../components/LogoutCaptain";
 
 const CaptainHome = () => {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
@@ -30,7 +31,6 @@ const CaptainHome = () => {
 
   useEffect(() => {
     socket?.on("new-ride", (data) => {
-      console.log(data);
       setRide(data);
       setRidePopupPanel(true);
     });
@@ -70,6 +70,8 @@ const CaptainHome = () => {
 
     updateLocation();
     const locationInterval = setInterval(updateLocation, 10000);
+
+    return () => clearInterval(locationInterval);
   }, [captain, socket]);
 
   const confirmRide = async () => {
@@ -93,21 +95,21 @@ const CaptainHome = () => {
   if (!captain) return null;
 
   return (
-    <div className="h-screen">
-      <div className="fixed p-6 -top-2 left-2 flex items-center justify-between w-screen">
-        <LiveTracking />
+    <div className="h-screen relative">
+      <div className="absolute top-6 right-6 z-10">
         <Link
           to="/captain-home"
-          className="h-10 w-10 bg-white flex items-center justify-center rounded-full"
+          className="h-10 w-10 bg-white flex items-center justify-center rounded-full shadow-md"
         >
-          <LucideLogOut/>
+          <LogoutButton />
         </Link>
       </div>
 
       <div className="h-3/5">
-        <div className="h-full w-full">
-          <LiveTracking />
-        </div>
+        <LiveTracking 
+          pickup={ride?.pickup}
+          destination={ride?.destination}
+        />
       </div>
 
       <div className="h-2/5 p-6">
@@ -115,7 +117,7 @@ const CaptainHome = () => {
       </div>
 
       <div
-        className={`fixed w-full z-10 bottom-0 bg-white px-3 py-2 pt-1 rounded-3xl transition-transform duration-300 ${
+        className={`fixed w-full z-10 bottom-0 bg-white px-3 py-2 pt-1 rounded-t-3xl transition-transform duration-300 ${
           ridePopupPanel ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -128,7 +130,7 @@ const CaptainHome = () => {
       </div>
 
       <div
-        className={`fixed w-full z-10 bottom-0 bg-white px-3 py-2 pt-1 rounded-3xl transition-transform duration-300 ${
+        className={`fixed w-full z-10 bottom-0 bg-white px-3 py-2 pt-1 rounded-t-3xl transition-transform duration-300 ${
           confirmRidePopupPanel ? "translate-y-0" : "translate-y-full"
         }`}
       >

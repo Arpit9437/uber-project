@@ -36,39 +36,33 @@ const CaptainRiding = () => {
     }
   }, [rideData?.pickup, rideData?.destination])
 
-  const handleCompleteRide = () => {
-    setFinishRidePanel(true)
-  }
-
-  const handleFinishRide = () => {
-    setRideCompleted(true)
-    setFinishRidePanel(false)
-  }
-
   return (
     <div className="relative h-screen bg-gray-100">
       <div className="absolute inset-0">
-        <LiveTracking />
+        <LiveTracking 
+          pickup={rideData?.pickup}
+          destination={rideData?.destination}
+        />
       </div>
 
       {!rideCompleted && (
-        <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg p-4">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-4">
-              <div>
-                <h2 className="text-lg font-semibold">Current Ride</h2>
+        <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg p-6">
+          <div className="flex justify-between items-center">
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold">Current Ride</h2>
+              <div className="flex items-center gap-4">
                 <p className="text-sm text-gray-600">{durations?.distance?.text || "Calculating..."}</p>
+                {durations?.duration && (
+                  <div className="flex items-center text-gray-600">
+                    <Clock size={16} className="mr-1" />
+                    <span className="text-sm">{durations.duration.text}</span>
+                  </div>
+                )}
               </div>
-              {durations?.duration && (
-                <div className="flex items-center text-gray-600">
-                  <Clock size={16} className="mr-1" />
-                  <span className="text-sm font-medium">{durations.duration.text}</span>
-                </div>
-              )}
             </div>
             <button
-              className="bg-green-600 text-white py-2 px-6 rounded-lg font-semibold shadow-md"
-              onClick={handleCompleteRide}
+              className="bg-green-600 hover:bg-green-700 transition-colors text-white py-3 px-6 rounded-lg font-semibold shadow-md"
+              onClick={() => setFinishRidePanel(true)}
             >
               Complete Ride
             </button>
@@ -77,18 +71,25 @@ const CaptainRiding = () => {
       )}
 
       {finishRidePanel && (
-        <div className="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-lg transition-transform duration-300 ease-in-out transform translate-y-0">
-          <FinishRide onClose={() => setFinishRidePanel(false)} ride={rideData} onFinish={handleFinishRide} />
+        <div className="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-lg">
+          <FinishRide 
+            onClose={() => setFinishRidePanel(false)} 
+            ride={rideData} 
+            onFinish={() => {
+              setRideCompleted(true)
+              setFinishRidePanel(false)
+            }} 
+          />
         </div>
       )}
 
       {rideCompleted && (
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-5/6 max-w-md">
             <h2 className="text-2xl font-bold mb-4 text-center">Ride Completed!</h2>
             <p className="text-gray-600 mb-4 text-center">Thank you for using our service.</p>
             <button
-              className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold"
+              className="w-full bg-green-600 hover:bg-green-700 transition-colors text-white py-3 px-6 rounded-lg font-semibold"
               onClick={() => setRideCompleted(false)}
             >
               Close
