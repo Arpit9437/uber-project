@@ -1,27 +1,25 @@
-import React from 'react';
-import { Loader2, X, User } from 'lucide-react';
+import { Loader2, X, User } from "lucide-react"
 
 const LookingForDriver = ({ pickup, destination, selectedVehicle, setActivePanel }) => {
   return (
     <div className="bg-white rounded-t-3xl p-6 shadow-lg animate-slideUp">
       {/* Close Button */}
-      <button 
+      <button
         className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
-        onClick={() => setActivePanel('confirm')}
-        // () => setVehicleFound(false)
+        onClick={() => setActivePanel("confirm")}
       >
         <X size={24} className="text-gray-500" />
       </button>
 
       {/* Header */}
       <div className="relative mb-8">
-        <button 
+        <button
           className="absolute left-1/2 -translate-x-1/2 -top-2 p-2 hover:bg-gray-100 rounded-full transition-colors"
-          onClick={() => setVehicleFound(false)}
+          onClick={() => setActivePanel("confirm")}
         >
           <div className="w-12 h-1 bg-gray-300 rounded-full" />
         </button>
-        
+
         <div className="text-center mt-4">
           <h3 className="text-2xl font-semibold">Looking for a Driver</h3>
           <div className="flex items-center justify-center mt-2">
@@ -74,7 +72,8 @@ const LookingForDriver = ({ pickup, destination, selectedVehicle, setActivePanel
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LookingForDriver;
+export default LookingForDriver
+

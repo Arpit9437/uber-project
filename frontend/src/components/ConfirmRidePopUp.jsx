@@ -37,18 +37,15 @@ const ConfirmRidePopUp = ({
   return (
     <div className="relative px-4">
       {/* Drag handle */}
-      <div className="absolute -top-2 left-0 right-0 flex justify-center">
+      {/* <div className="absolute -top-2 left-0 right-0 flex justify-center">
         <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
-      </div>
+      </div> */}
 
       {/* Header */}
       <div className="mb-6 mt-4">
         <h3 className="text-2xl font-bold text-gray-900">
           Confirm Trip Details
         </h3>
-        <p className="text-gray-500 text-sm mt-1">
-          Enter OTP to start the ride
-        </p>
       </div>
 
       {/* Passenger Info */}

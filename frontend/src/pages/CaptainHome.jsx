@@ -6,6 +6,7 @@ import ConfirmRidePopUp from "../components/ConfirmRidePopUp";
 import { SocketContext } from "../context/SocketContext";
 import axios from 'axios';
 import LiveTracking from "../components/LiveTracking";
+import { LogOut } from "lucide-react";
 
 const CaptainHome = () => {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
@@ -93,22 +94,20 @@ const CaptainHome = () => {
 
   return (
     <div className="h-screen">
-      <div className="fixed p-6 top-0 flex items-center justify-between w-screen">
+      <div className="fixed p-6 -top-2 left-2 flex items-center justify-between w-screen">
         <LiveTracking />
         <Link
           to="/captain-home"
           className="h-10 w-10 bg-white flex items-center justify-center rounded-full"
         >
-          <i className="text-lg font-medium ri-logout-box-r-line"></i>
+          <LogOut className="text-lg" />
         </Link>
       </div>
 
       <div className="h-3/5">
-        <img
-          className="h-full w-full object-cover"
-          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
-          alt="Map"
-        />
+        <div className="h-full w-full">
+          <LiveTracking />
+        </div>
       </div>
 
       <div className="h-2/5 p-6">
@@ -116,7 +115,7 @@ const CaptainHome = () => {
       </div>
 
       <div
-        className={`fixed w-full z-10 bottom-0 bg-white px-3 py-10 pt-12 transition-transform duration-300 ${
+        className={`fixed w-full z-10 bottom-0 bg-white px-3 py-2 pt-1 rounded-3xl transition-transform duration-300 ${
           ridePopupPanel ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -129,7 +128,7 @@ const CaptainHome = () => {
       </div>
 
       <div
-        className={`fixed w-full h-screen z-10 bottom-0 bg-white px-3 py-10 pt-12 transition-transform duration-300 ${
+        className={`fixed w-full z-10 bottom-0 bg-white px-3 py-2 pt-1 rounded-3xl transition-transform duration-300 ${
           confirmRidePopupPanel ? "translate-y-0" : "translate-y-full"
         }`}
       >

@@ -1,25 +1,25 @@
-import React, { useContext } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, MapPin, Wallet, Car } from "lucide-react";
-import { SocketContext } from "../context/SocketContext";
-import LiveTracking from "../components/LiveTracking";
+import { useContext } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Home, MapPin, Wallet, Car } from "lucide-react"
+import { SocketContext } from "../context/SocketContext"
+import LiveTracking from "../components/LiveTracking"
 
 const Riding = () => {
-  const location = useLocation();
-  const { ride } = location.state || {};
-  const navigate = useNavigate();
-  const { socket } = useContext(SocketContext);
+  const location = useLocation()
+  const { ride } = location.state || {}
+  const navigate = useNavigate()
+  const { socket } = useContext(SocketContext)
 
   socket.on("ride-ended", () => {
-    navigate("/home");
-  });
+    navigate("/home")
+  })
 
   const handlePayment = () => {
-    console.log("Processing payment...");
-  };
+    console.log("Processing payment...")
+  }
 
   return (
-    <div className="h-screen relative overflow-hidden">
+    <div className="h-screen relative overflow-hidden bg-gray-100">
       {/* Map Section */}
       <div className="h-screen w-screen">
         <LiveTracking />
@@ -28,61 +28,53 @@ const Riding = () => {
       {/* Home Button */}
       <Link
         to="/home"
-        className="fixed right-4 top-4 h-12 w-12 bg-white shadow-lg flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors z-10"
+        className="fixed right-0.5 top-0.5 h-14 w-14 bg-white shadow-lg flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors z-10"
       >
         <Home className="w-6 h-6 text-gray-700" />
       </Link>
 
       {/* Ride Details Section */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl">
-        <div className="p-4">
-          <div className="space-y-4">
+      <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-lg">
+        <div className="p-6">
+          <div className="space-y-6">
             {/* Vehicle & Driver Info */}
-            <div className="flex items-center gap-4 p-3 border-b">
-              <div className="h-12 w-20 bg-gray-200 rounded flex items-center justify-center">
-                <Car className="text-gray-600" size={32} />
+            <div className="flex items-center gap-4 pb-4 border-b border-gray-200">
+              <div className="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                <Car className="text-gray-600" size={36} />
               </div>
               <div>
-                <h4 className="font-medium capitalize">
-                  {ride?.captain?.fullname?.firstname || "John"}
-                </h4>
-                <p className="text-sm text-gray-600">
-                  {ride?.captain?.vehicle?.plate || "XX XX XXXX"}
-                </p>
+                <h4 className="font-semibold text-lg capitalize">{ride?.captain?.fullname?.firstname || "John"}</h4>
+                <p className="text-gray-600">{ride?.captain?.vehicle?.plate || "XX XX XXXX"}</p>
               </div>
               <div className="ml-auto">
-                <span className="text-lg font-semibold">
-                  ₹{ride?.fare || "0"}
-                </span>
+                <span className="text-2xl font-bold">₹{ride?.fare || "0"}</span>
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Location Details */}
-              <div className="flex items-center gap-3">
-                <MapPin size={20} className="text-gray-500" />
+              <div className="flex items-start gap-4">
+                <MapPin size={24} className="text-gray-500 mt-1" />
                 <div>
-                  <p className="text-sm text-gray-500">Pickup</p>
-                  <p className="font-medium">562/11-A</p>
+                  <p className="text-gray-500">Pickup</p>
+                  <p className="font-medium text-lg">{ride?.pickup || "Pickup Address"}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <MapPin size={20} className="text-gray-500" />
+              <div className="flex items-start gap-4">
+                <MapPin size={24} className="text-gray-500 mt-1" />
                 <div>
-                  <p className="text-sm text-gray-500">Destination</p>
-                  <p className="font-medium">
-                    {ride?.destination || "Destination Address"}
-                  </p>
+                  <p className="text-gray-500">Destination</p>
+                  <p className="font-medium text-lg">{ride?.destination || "Destination Address"}</p>
                 </div>
               </div>
 
               {/* Payment Method */}
-              <div className="flex items-center gap-3">
-                <Wallet size={20} className="text-gray-500" />
+              <div className="flex items-start gap-4">
+                <Wallet size={24} className="text-gray-500 mt-1" />
                 <div>
-                  <p className="text-sm text-gray-500">Payment Method</p>
-                  <p className="font-medium">Cash Payment</p>
+                  <p className="text-gray-500">Payment Method</p>
+                  <p className="font-medium text-lg">Cash Payment</p>
                 </div>
               </div>
             </div>
@@ -90,7 +82,7 @@ const Riding = () => {
             {/* Payment Button */}
             <button
               onClick={handlePayment}
-              className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-900 transition-colors"
+              className="w-full bg-black text-white py-4 rounded-lg font-medium text-lg hover:bg-gray-900 transition-colors"
             >
               Make Payment
             </button>
@@ -98,7 +90,8 @@ const Riding = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Riding;
+export default Riding
+
