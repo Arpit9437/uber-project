@@ -1,24 +1,48 @@
-import { User } from "lucide-react"
+import axios from "axios"
+import { User, Clock } from "lucide-react"
+import { useEffect, useState } from "react"
 
 const RidePopUp = ({ ride, setRidePopupPanel, setConfirmRidePopupPanel, confirmRide }) => {
+  const [durations, setDurations] = useState({})
+  
+  useEffect(() => {
+    const fetchDurations = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/maps/get-distance-time`, {
+          params: { origin: ride?.pickup, destination: ride?.destination },
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setDurations(response.data)
+      } catch (error) {
+        console.error("Error fetching durations:", error)
+      }
+    }
+
+    if (ride?.pickup && ride?.destination) {
+      fetchDurations()
+    }
+  }, [ride?.pickup, ride?.destination])
+
   return (
     <div className="relative px-6">
-      {/* Drag handle */}
-      {/* <div className="absolute -top-2 left-0 right-0 flex justify-center">
-        <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
-      </div> */}
-
-      {/* Header */}
       <div className="mb-6 mt-6">
-        <h3 className="text-2xl font-bold text-gray-900">New Ride Request</h3>
-        <p className="text-gray-500 text-sm mt-1">2.2 km away • Est. fare ₹{ride?.fare}</p>
+        <div className="flex items-center justify-between">
+          <h3 className="text-2xl font-bold text-gray-900">New Ride Request</h3>
+          {durations?.duration && (
+            <div className="flex items-center text-gray-600">
+              <Clock size={16} className="mr-1" />
+              <span className="text-sm font-medium">{durations.duration.text}</span>
+            </div>
+          )}
+        </div>
+        <p className="text-gray-500 text-sm mt-1">
+          {durations?.distance?.text} • Est. fare ₹{ride?.fare}
+        </p>
       </div>
 
-      {/* Ride Details Card */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-        {/* Route Info */}
         <div className="relative pl-8">
-          {/* Pickup */}
           <div className="mb-6 relative">
             <div className="absolute left-[calc(-1.25rem)] w-6 h-6 flex items-center justify-center">
               <div className="w-3 h-3 bg-black rounded-full" />
@@ -27,7 +51,6 @@ const RidePopUp = ({ ride, setRidePopupPanel, setConfirmRidePopupPanel, confirmR
             <h4 className="font-medium mt-0.5">{ride?.pickup || "562/11-A"}</h4>
           </div>
 
-          {/* Destination */}
           <div className="relative">
             <div className="absolute left-[calc(-1.25rem)] w-6 h-6 flex items-center justify-center">
               <div className="w-3 h-3 bg-green-500 rounded-full" />
@@ -38,7 +61,6 @@ const RidePopUp = ({ ride, setRidePopupPanel, setConfirmRidePopupPanel, confirmR
         </div>
       </div>
 
-      {/* Passenger Info */}
       <div className="bg-gray-50 rounded-xl p-4 mb-6">
         <p className="text-sm text-gray-500 mb-2">PASSENGER</p>
         <div className="flex items-center">
@@ -56,7 +78,6 @@ const RidePopUp = ({ ride, setRidePopupPanel, setConfirmRidePopupPanel, confirmR
         </div>
       </div>
 
-      {/* Action Buttons */}
       <div className="space-y-3 mb-6">
         <button
           onClick={() => {
@@ -79,4 +100,3 @@ const RidePopUp = ({ ride, setRidePopupPanel, setConfirmRidePopupPanel, confirmR
 }
 
 export default RidePopUp
-

@@ -240,6 +240,8 @@ const Home = () => {
             fare={fareData}
             isLoading={isFareLoading}
             selectedVehicle={setVehicleType}
+            pickup={pickup}
+            destination={destination}
           />
         </div>
       )}

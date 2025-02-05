@@ -1,11 +1,14 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useLocation } from "react-router-dom"
+import axios from "axios"
+import { Clock } from "lucide-react"
 import FinishRide from "../components/FinishRide"
 import LiveTracking from "../components/LiveTracking"
 
 const CaptainRiding = () => {
   const [finishRidePanel, setFinishRidePanel] = useState(false)
   const [rideCompleted, setRideCompleted] = useState(false)
+  const [durations, setDurations] = useState({})
   const location = useLocation()
   const rideData = location.state?.ride || {
     user: { fullname: { firstname: "Passenger" } },
@@ -13,6 +16,25 @@ const CaptainRiding = () => {
     destination: "562/11-A",
     fare: "150",
   }
+
+  useEffect(() => {
+    const fetchDurations = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/maps/get-distance-time`, {
+          params: { origin: rideData?.pickup, destination: rideData?.destination },
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setDurations(response.data)
+      } catch (error) {
+        console.error("Error fetching durations:", error)
+      }
+    }
+
+    if (rideData?.pickup && rideData?.destination) {
+      fetchDurations()
+    }
+  }, [rideData?.pickup, rideData?.destination])
 
   const handleCompleteRide = () => {
     setFinishRidePanel(true)
@@ -32,9 +54,17 @@ const CaptainRiding = () => {
       {!rideCompleted && (
         <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg p-4">
           <div className="flex justify-between items-center mb-4">
-            <div>
-              <h2 className="text-lg font-semibold">Current Ride</h2>
-              <p className="text-sm text-gray-600">4 KM away</p>
+            <div className="flex items-center gap-4">
+              <div>
+                <h2 className="text-lg font-semibold">Current Ride</h2>
+                <p className="text-sm text-gray-600">{durations?.distance?.text || "Calculating..."}</p>
+              </div>
+              {durations?.duration && (
+                <div className="flex items-center text-gray-600">
+                  <Clock size={16} className="mr-1" />
+                  <span className="text-sm font-medium">{durations.duration.text}</span>
+                </div>
+              )}
             </div>
             <button
               className="bg-green-600 text-white py-2 px-6 rounded-lg font-semibold shadow-md"
@@ -71,4 +101,3 @@ const CaptainRiding = () => {
 }
 
 export default CaptainRiding
-

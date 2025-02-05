@@ -6,7 +6,7 @@ import ConfirmRidePopUp from "../components/ConfirmRidePopUp";
 import { SocketContext } from "../context/SocketContext";
 import axios from 'axios';
 import LiveTracking from "../components/LiveTracking";
-import { LogOut } from "lucide-react";
+import { LogOut, LucideLogOut } from "lucide-react";
 
 const CaptainHome = () => {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
@@ -100,7 +100,7 @@ const CaptainHome = () => {
           to="/captain-home"
           className="h-10 w-10 bg-white flex items-center justify-center rounded-full"
         >
-          <LogOut className="text-lg" />
+          <LucideLogOut/>
         </Link>
       </div>
 
